@@ -1,6 +1,7 @@
-$tcltkdb::VERSION = '2.0';
+$tcltkdb::VERSION = '2.1';
 
 use strict;
+use Data::Dumper;
 use Tcl::Tk;
 
 #
@@ -109,7 +110,7 @@ to that file and line where the breakpoint is set.  Pressing the
 =item About...
 
 Presents a dialog box telling you about the version of ptkdb.  It
-recovers your OS name, version of perl, version of Tk, and some other
+recovers your OS name, version of perl, version of Tcl/Tk, and some other
 information
 
 =item Open
@@ -123,8 +124,7 @@ text window.
 Prompts for a filename to save the
 configuration to. Saves the breakpoints, expressions, eval text and
 window geometry. If the name given as the default is used and the
-script is reinvoked, this configuration will be reloaded
-automatically.
+script is reinvoked, this configuration will be reloaded automatically.
 
     B<NOTE:>  You may find this preferable to using 
 
@@ -135,15 +135,17 @@ the "Save Config..." menu item.
 
 =item Goto Line...
 
-Prompts for a line number.  Pressing the "Okay" button sends the window to the line number entered.
-item Find Text...
+Prompts for a line number.  Pressing the "Okay" button sends the window
+to the line number entered.
+
+=item Find Text...
 
 Prompts for text to search for.  Options include forward search,
 backwards search, and regular expression searching.
 
 =item Quit
 
- Causes the debugger and the target script to exit. 
+Causes the debugger and the target script to exit. 
 
 =back
 
@@ -153,8 +155,10 @@ backwards search, and regular expression searching.
 
 =item Run
 
-The debugger allows the script to run to the next breakpoint or until the script exits.
-item Run To Here
+The debugger allows the script to run to the next breakpoint or until
+the script exits.
+
+=item Run To Here
 
 Runs the debugger until it comes to wherever the insertion cursor
 in text window is placed.
@@ -162,7 +166,8 @@ in text window is placed.
 =item Set Breakpoint
 
 Sets a breakpoint on the line at the insertion cursor.  
-item Clear Breakpoint
+
+=item Clear Breakpoint
 
 Remove a breakpoint on the at the insertion cursor.
 
@@ -184,8 +189,7 @@ executable line within the subroutine.
 
 =item Return
 
-Runs the script until it returns from the currently executing
-subroutine.  
+Runs the script until it returns from the currently executing subroutine.  
 
 =item Restart
 
@@ -221,11 +225,11 @@ and its result updated in the list window.
 
 =item Delete Expression
 
- Deletes the highlighted expression in the expression window.
+Deletes the highlighted expression in the expression window.
 
 =item Delete All Expressions
 
- Delete all expressions in the expression window.
+Delete all expressions in the expression window.
 
 =item Expression Eval Window
 
@@ -282,15 +286,15 @@ fonts.
     * to activate them. 
     */
 
-    ptkdb.frame*font: fixed                           /* Menu Bar */
-    ptkdb.frame2.frame1.rotext.font: fixed            /* Code Pane */
+    ptkdb.frame*font: fixed                    /* Menu Bar */
+    ptkdb.frame2.frame1.rotext.font: fixed     /* Code Pane */
 
-    ptkdb.toplevel.frame.textundo.font: fixed         /* Eval Expression Entry Window */
-    ptkdb.toplevel.frame1.text.font: fixed            /* Eval Expression Results Window */
-    ptkdb.toplevel.button.font:  fixed                /* "Eval..." Button */
-    ptkdb.toplevel.button1.font: fixed                /* "Clear Eval" Button */
-    ptkdb.toplevel.button2.font: fixed                /* "Clear Results" Button */
-    ptkdb.toplevel.button3.font: fixed                /* "Clear Dismiss" Button */
+    ptkdb.toplevel.frame.textundo.font: fixed  /* Eval Expression Entry Window */
+    ptkdb.toplevel.frame1.text.font: fixed     /* Eval Expression Results Window */
+    ptkdb.toplevel.button.font:  fixed         /* "Eval..." Button */
+    ptkdb.toplevel.button1.font: fixed         /* "Clear Eval" Button */
+    ptkdb.toplevel.button2.font: fixed         /* "Clear Results" Button */
+    ptkdb.toplevel.button3.font: fixed         /* "Clear Dismiss" Button */
 
     /*
     * Background color for where the debugger has stopped 
@@ -330,20 +334,16 @@ Sets the font of the Text in the code pane.
 
 =item PTKDB_EXPRESSION_FONT
 
- Sets the font used in the expression notebook page.
+Sets the font used in the expression notebook page.
 
 =item PTKDB_EVAL_FONT
 
- Sets the font used in the Expression Eval Window
-
-=item PTKDB_EVAL_DUMP_INDENT
-
- Sets the value used for Data::Dumper 'indent' setting. See man Data::Dumper
+Sets the font used in the Expression Eval Window
 
 =item PTKDB_DISPLAY
 
-Sets the X display that the ptkdb window will appear on when invoked.  Useful for debugging CGI
-scripts on remote systems.  
+Sets the X display that the ptkdb window will appear on when invoked.
+Useful for debugging CGI scripts on remote systems.  
 
 =item PTKDB_BOOKMARKS_PATH
 
@@ -366,8 +366,6 @@ calls that can be used with such scripts. There is an internal
 variable $DB::no_stop_at_start that may be set to non-zero to prevent
 the debugger from stopping at the first line of the script.  This is
 useful for debugging CGI scripts.
-
-There is a system ptkdbrc file in $PREFIX/lib/perl5/$VERS/Devel/ptkdbrc
 
 =over 4
 
@@ -461,26 +459,12 @@ variable.  NOTE: for debugging web scripts you may have to have the
 or whatever username your webserver is running under.  Also try
 installing a .ptkdbrc file in the same directory as the target script.
 
-=head1 KNOWN PROBLEMS
-
-=over
-
-=item I<Breakpoint Controls>
-
-If the size of the right hand pane is too small the breakpoint controls
-are not visible.  The breakpoints are still there, the window may have
-to be enlarged in order for them to be visible.  
-
-=back
-
 =head1 AUTHORS
 
  Andrew E. Page
  Vadim Konovalov
 
 =cut
-
-use Data::Dumper;
 
 use vars qw(@dbline);
 
@@ -499,9 +483,7 @@ sub BEGIN {
  @Devel::tcltkdb::expression_text_font = $ENV{'PTKDB_EXPRESSION_FONT'} ? ( "-font" => $ENV{'PTKDB_EXPRESSION_FONT'} ) : () ;
  @Devel::tcltkdb::eval_text_font = $ENV{'PTKDB_EVAL_FONT'} ? ( -font => $ENV{'PTKDB_EVAL_FONT'} ) : () ; # text for the expression eval window
 
- $Devel::tcltkdb::eval_dump_indent = $ENV{'PTKDB_EVAL_DUMP_INDENT'} || 1 ;
-
- $Devel::tcltkdb::linenumber_length = 5 ;
+ $Devel::tcltkdb::linenumber_length = 5;
 
    #
    # DB Options (things not directly involving the window)
@@ -716,13 +698,13 @@ sub DoOpen {
   #
   @fList = sort { 
     # sort comparison function block
-    my $fa = substr($a, 0, 1) ;
-    my $fb = substr($b, 0, 1) ;
+    my $fa = substr($a, 0, 1);
+    my $fb = substr($b, 0, 1);
 
-    return $a cmp $b if ($fa eq '/') && ($fb eq '/') ;
+    return $a cmp $b if ($fa eq '/') && ($fb eq '/');
 
-    return -1 if ($fb eq '/') && ($fa ne '/') ;
-    return 1 if ($fa eq '/' ) && ($fb ne '/') ;
+    return -1 if ($fb eq '/');
+    return 1 if ($fa eq '/' );
 
     return $a cmp $b ;
 
@@ -1057,9 +1039,9 @@ sub add_bookmark {
 # Command executed when someone selects a bookmark
 #
 sub bookmark_cmd {
-  my ($self, $item) = @_ ;
-  $item =~ /(.*):(\d+)$/ ;
-  $self->set_file($1,$2) ;
+  my ($self, $item) = @_;
+  $item =~ /^(.*):(\d+)$/;
+  $self->set_file($1,$2);
 }
 
 sub save_bookmarks {
@@ -1252,7 +1234,7 @@ sub sub_list_cmd {
     return ;
   }
 
-  $DB::sub{$h->{'path'}} =~ /(.*):(\d+)-\d+$/; # file name will be in $1, line number will be in $2 */
+  $DB::sub{$h->{'path'}} =~ /^(.*):(\d+)-\d+$/; # file name will be in $1, line number will be in $2
 
   $self->set_file($1, $2);
 } # end of sub_list_cmd
@@ -1309,7 +1291,7 @@ sub sub_list_cmd0 {
   $DB::sub{$h->{'path'}} =~ /(.*):(\d+)-\d+$/; # file name will be in $1, line number in $2
 
   $self->set_file($1, $2);
-} ######################
+}
 
 sub fill_subs_page {
   my $self = shift;
@@ -2027,7 +2009,6 @@ sub set_line {
 sub set_file {
   my ($self, $fname, $line) = @_ ;
   my ($lineStr, $offset, $text, @text);
-  my (@breakableTagList, @nonBreakableTagList) ;
 
   return unless $fname ;  # we're getting an undef here on 'Restart...'
 
@@ -2052,10 +2033,7 @@ sub set_file {
   $self->{main_window}->configure('-title' => $fname) ;
 
   # Erase any existing text
-
-  $text->delete('1.0','end') ;
-
-  my $len = $Devel::tcltkdb::linenumber_length ;
+  $text->delete('1.0','end');
 
   #
   # This is the tightest loop we have in the ptkdb code.
@@ -2066,47 +2044,23 @@ sub set_file {
   #
 
   local($^W) = 0 ; # spares us useless warnings under -w when checking $dbline[$_] != 0
-  #
-  # The 'map' call will build list of 'string', 'tag' pairs
-  # that will become arguments to the 'insert' call.  Passing
-  # the text to insert "all at once" is faster, compared to one 
-  # insert->('end', 'string', 'tag') call at time.
-  #
+
   my $noCode = ($#dbline - ($offset + 1)) < 0 ;
 
-  my ($i0,$i) = ("00000",0);
+  my $i0 = "0" x $Devel::tcltkdb::linenumber_length;
   $text->_insertEnd(map {
-    #
-    # build collections of tags representing the line numbers for breakable and 
-    # non-breakable lines.  We apply these tags after we've built the text
-    #
-
-    $i0++; $i++;
-    ($_ != 0 && push @breakableTagList, "$i.0", "$i.$len") || push @nonBreakableTagList, "$i.0", "$i.$len" ;
-
-    #$lineStr = sprintf($Devel::tcltkdb::linenumber_format, $i++) . $_ ; # line number + text of the line
     #$lineStr .= "\n" unless /\n$/; # append a \n if there isn't one already
+    ($i0++, ($_==0?'nonbreakableLine':'breakableLine'), " $_", 'code') # a string,tag pair for text insert
 
-    ("$i0 $_", 'code') ; # a string,tag pair for text insert
-
-  } @dbline[$offset+1 .. $#dbline] ) unless $noCode ;
-
-  #
-  # Apply the tags that we've collected
-  # NOTE:  it was attempted to incorporate these
-  # operations into the 'map' block above, but that
-  # actually degraded performance.  
-  #
-  $text->tagAdd("breakableLine", map{s/\.$/.end/;$_}@breakableTagList) if @breakableTagList ; # apply tag to line numbers where the lines are breakable
-  $text->tagAdd("nonbreakableLine", map{s/\.$/.end/;$_}@nonBreakableTagList) if @nonBreakableTagList ; # apply tag to line numbers where the lines are not breakable.  
+  } @dbline[$offset+1 .. $#dbline] ) unless $noCode;
 
   #
   # Reinsert breakpoints (if info provided)
   #
 
-  $self->set_line($line) ;
-  $self->{current_file} = $fname ;
-  return $self->reinsertBreakpoints($fname) ;
+  $self->set_line($line);
+  $self->{current_file} = $fname;
+  return $self->reinsertBreakpoints($fname);
 } # end of set_file
 
 #
@@ -2126,17 +2080,16 @@ sub DoGoto {
 
   my $txt = $entry->get() ;
 
-  $txt =~ s/(\d*).*/$1/ ; # take the first blob of digits
+  $txt =~ s/(\d*).*/$1/; # take the first blob of digits
   if( $txt eq "" ) {
-    print "invalid text range\n" ;
-    return if $txt eq "" ;
+    print "invalid text range\n";
+    return;
   }
 
   $self->{'text'}->see("$txt.0") ;
 
-  $entry->selectionRange(0, 'end') if $entry->can('selectionRange')
-
-    } # end of DoGoto
+  $entry->_selectionRange(0, 'end');
+} # end of DoGoto
 
 sub GotoLine {
   my ($self) = @_ ;
@@ -2217,7 +2170,7 @@ sub FindSearch {
     $self->{'text'}->see($result) ;
     # set the insertion of the text as well
     $self->{'text'}->markSet('insert' => $result) ;
-    my $len = length $txt ;
+    my $len = length $txt;
 
     if( $self->{fwdOrBack} ) {
       $self->{search_start}  = "$result +$len chars"  ;
@@ -2234,7 +2187,7 @@ sub FindSearch {
     $self->{'text'}->tagAdd('search_tag', @{$self->{search_tag}}) ;
   } # end of text found
 
-  $entry->selectionRange(0, 'end') if $entry->can('selectionRange') ;
+  $entry->_selectionRange(0, 'end');
 
 } # end of FindSearch
 
@@ -2432,7 +2385,7 @@ sub updateEvalWindow {
       $self->{eval_results}->insert('end', hexDump($_)) ;
     } else {
       my $d = Data::Dumper->new([$_]);
-      $d->Indent($Devel::tcltkdb::eval_dump_indent);
+      $d->Indent(2);
       $d->Terse(1);
       $str = $d->Dump($_);
     }
@@ -2546,26 +2499,27 @@ sub filterBreakPts {
 sub DoAbout {
   my $self = shift ;
   my $str = <<"__STR__" ;
-tcltkdb $DB::VERSION
-Copyright 1998,2003 by Andrew E. Page, 2010 Vadim Konovalov.
+tcltkdb $tcltkdb::VERSION
+Copyright 1998,2003 by Andrew E. Page, 2010,2011 Vadim Konovalov.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of either:
 
-      a) the GNU General Public License as published by the Free
-    Software Foundation; either version 1, or (at your option) any
-    later version, or
+a) the GNU General Public License as published by the Free
+Software Foundation; either version 1, or (at your option) any
+later version, or
 
-    b) the "Artistic License" which comes with this Kit.
+b) the "Artistic License" which comes with this Kit.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either
-    the GNU General Public License or the Artistic License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either
+the GNU General Public License or the Artistic License for more details.
 
-    OS $^O
-    Tk Version $Tk::VERSION
-    Perl Version $]
+OS $^O
+Tcl/Tk Version $Tcl::Tk::TK_VERSION
+Tcl::Tk Version $Tcl::Tk::VERSION
+Perl Version $]
 __STR__
 
     $self->DoAlert($str, "About ptkdb") ;
@@ -2693,7 +2647,7 @@ sub code_motion_eval {
     my ($self, @result) = @_;
     my $d = new Data::Dumper([]);
     $d->Terse(1);
-    $d->Indent($Devel::tcltkdb::eval_dump_indent);
+    $d->Indent(2);
     $d->Values( [ $#result == 0 ? @result : \@result ]); 
     my $str = $d->Dump();
     chomp($str) ;
@@ -3388,13 +3342,13 @@ sub DB {
            # and it if wasn't added sucessfully it won't be reevalled the 
            # next time through.  
            #
-           push @{$DB::window->{'expr_list'}}, { 'expr' => $DB::window->{'expr'}, 'depth' => -1 } if $r ;
+           push @{$DB::window->{'expr_list'}}, { 'expr' => $DB::window->{'expr'}, 'depth' => -1 } if $r;
 
-           next ;
+           next;
          }
          if( $evt eq 'update' ) {
-           updateExprs($package) ;
-           next ;
+           updateExprs($package);
+           next;
          }
          if( $evt eq 'reeval' ) {
            #
@@ -3455,34 +3409,34 @@ sub DB {
          use strict ;
 
        $DB::subroutine_depth -= 1 unless $DB::on ;
-       $DB::single = 1 if ($DB::step_over_depth >= $DB::subroutine_depth && !$DB::on) ;  
-         return @result ; 
+       $DB::single = 1 if ($DB::step_over_depth >= $DB::subroutine_depth && !$DB::on); 
+         return @result;
 
        } elsif(defined wantarray) {
 	 # scalar context
 
-         no strict ; 
-         $result = &$DB::sub ; 
-         use strict ;
+         no strict;
+         $result = &$DB::sub;
+         use strict;
 
-       $DB::subroutine_depth -= 1 unless $DB::on ;
-       $DB::single = 1 if ($DB::step_over_depth >= $DB::subroutine_depth  && !$DB::on) ;
-         return $result ; 
+       $DB::subroutine_depth -= 1 unless $DB::on;
+       $DB::single = 1 if ($DB::step_over_depth >= $DB::subroutine_depth  && !$DB::on);
+         return $result;
 
        } else {
 	 # void context
 
-         no strict ; 
-         &$DB::sub ; 
-         use strict ;
+         no strict;
+         &$DB::sub;
+         use strict;
 
        $DB::subroutine_depth -= 1 unless $DB::on ;
-       $DB::single = 1 if ($DB::step_over_depth >= $DB::subroutine_depth && !$DB::on) ;
-         return; 
+       $DB::single = 1 if ($DB::step_over_depth >= $DB::subroutine_depth && !$DB::on);
+         return;
 
        }
 
-     } # end of sub 
+     } # end of sub
 
-1 ; # return true value
+1; # return true value
 

@@ -1,10 +1,16 @@
 Revision history for Perl extension Devel::tcltkdb.
+ 
+2.1     2011-02-22
+	implement another way of instant expression browsing (TBD)
+	no more $ENV{PTKDB_EVAL_DUMP_INDENT}, it is now 2
+	removed tricks to make perl/Tk faster which no more matter (e.g. in sub set_file)
+	fix pod a bit
 
-2.0	2011/01/01 - 2011/02/20
-	fork from ptkdb.pm, significant rework
+2.0	2011-01-01 - 2011-02-20
+	fork from ptkdb.pm and significant rework:
 	- pretend Data::Dumper is available
 	- many cleanup of code
-	- get rid of tix? TBD TODO
+	- get rid of Tix
 	- remove many of obsolete code: get_notebook_widget,
 	  register_user_DB_entry, register_user_window_init, setTabs, etc,
 	  code that eval's chunks in ptkdbrc file to support changing colors
@@ -27,4 +33,4 @@ Revision history for Perl extension Devel::tcltkdb.
         moved changelog from PM file to Changes, only have in one place
         moved license from PM file to README
         moved sample Xresources from PM
-
+	removed 'package DB;' at top that used to workaround bug in 5.8.0

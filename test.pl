@@ -18,3 +18,14 @@ print "ok 1\n";
 # (correspondingly "not ok 13") depending on the success of chunk 13
 # of the test code):
 
+#my $prog = <<'EOS' .
+#use strict;
+#$a = 'qwerty';
+#EOS
+#'$a++;
+#print $a;
+#' x 70000;
+## fake 'debug' this $prog TODO
+#
+#print "ok 2\n";
+
